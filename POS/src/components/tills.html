@@ -1,0 +1,123 @@
+<div class="container-fluid">
+    <div class="tills-content">
+        <div class="row">
+            <div class="col-md-4">
+                <input id="tillsSearch" type="text" class="form-control" autocomplete="off" placeholder="Баркод" style="margin-bottom: 15px;"/>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-image" id="tills-payment-view-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Бар код</th>
+                        <th scope="col">Нэр</th>
+                        <th scope="col">Салбар</th>
+                        <th scope="col">Тоо ш</th>
+                        <th scope="col">X</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr><td>baraa 1</td></tr>
+                    <tr><td>baraa 2</td></tr>
+                </tbody>
+                <tfooter>
+
+                </tfooter>
+            </table>
+        </div>
+    </div>
+    <div class="tills-footer">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="container-fluid">
+                    <h5><span class="badge badge-info">Төлбөр хөнгөлөлт</span></h5>
+                </div>
+                <div class="container-fluid">
+                    Discount: 
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="container-fluid">
+                    <h5><span class="badge badge-primary">Төлбөр төлөлт</span></h5>
+                </div>
+                <div class="container-fluid">
+                    <button id="paymentProcessBtn" type="button" 
+                        class="btn btn-outline-success" data-toggle="modal" data-target=".tills-payment-modal">Төлөх</button>
+                    <button id="paymentAbortBtn" type="button" class="btn btn-outline-danger" onclick="abortPayment()">Цуцлах</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade tills-payment-modal" tabindex="-1" role="dialog" aria-labelledby="tillsPaymentModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">
+                  Төлбөр
+              </h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">Total: 12$</div>
+                <div class="col-md-6">Payment: 12$</div>
+                <div class="col-md-6">Balance: 12$</div>
+                <div class="col-md-6">Change: 12$</div>
+            </div>
+            <hr class="mt-2 mb-3"/>
+            <div class="row">
+                <table class="table table-image" id="tills-payment-process-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Төлбөрийн хэлбэр</th>
+                            <th scope="col">Хэмжээ</th>
+                            <th scope="col">X</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <button class="btn-sm btn-secondary" onclick="cashPaymentAdd()">Бэлэн</button>
+                <button class="btn-sm btn-secondary" id="">Карт</button>
+                <button class="btn-sm btn-secondary" id="">Урамшууллын оноо</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-sm btn-success">Төлбөр оруулах</button>
+            <button type="button" class="btn-sm btn-secondary" data-dismiss="modal">Хаах</button>
+          </div>
+      </div>
+    </div>
+    <script>
+        function openPaymentWindow(){
+
+        }
+
+        function abortPayment(){
+            $("#tills-payment-view-table tbody").empty();
+        }
+
+        function cashPaymentAdd(){
+            var input = "<tr class='payment-wrapper'>";
+            input += "<td><input class='form-control' type='text'/></td>";
+            input += "<td><input class='form-control' type='number'/></td>";
+            input += "<td><button type='button' onclick='removePayment(this)'>X</button></td>";
+            input += "</tr>";
+
+            $("#tills-payment-process-table tbody").append(input);
+        }
+
+        function removePayment(element){
+            // DEFINITION: element.parentNode.parentNode == "<tr>"
+            element.parentNode.parentNode.remove();
+        }
+    </script>
+    <script>
+        const tillsservice = require('../service/tillsservice');
+        $("#tillsSearch").on("input", tillsservice.tillsSearch);
+    </script>
+</div>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Rain POS</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script> 
+      $(function(){
+        $('#pills-till').load('./tills.html');
+        $('#pills-sales').load('./sales.html');
+        $('#pills-report').load('./report.html');
+        $('#pills-settings').load('./settings.html');
+      });
+      </script> 
+  </head>
+  <body>
+    <div class="wrapper">
+      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="pills-till-tab" data-toggle="pill" href="#pills-till" 
+          role="tab" aria-controls="pills-till" aria-selected="true">Касс</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="pills-sales-tab" data-toggle="pill" href="#pills-sales" 
+          role="tab" aria-controls="pills-sales" aria-selected="false">Борлуулалт</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="pills-report-tab" data-toggle="pill" href="#pills-report" 
+          role="tab" aria-controls="pills-report" aria-selected="false">Тайлан</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" 
+          role="tab" aria-controls="pills-settings" aria-selected="false">Тохиргоо</a>
+        </li>
+        <button id="logout" class="btn btn-primary" type="button">Системээс гарах</button>
+      </ul>
+
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-till" role="tabpanel" aria-labelledby="pills-till-tab">
+        </div>
+        <div class="tab-pane fade" id="pills-sales" role="tabpanel" aria-labelledby="pills-sales-tab">
+        </div>
+        <div class="tab-pane fade" id="pills-report" role="tabpanel" aria-labelledby="pills-report-tab">
+        </div>
+        <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
+        </div>
+      </div>
+      <footer>
+        <div style="text-align: center;">
+          Rain Ltd. & Co.
+        </div>
+      </footer>
+    </div>
+    <!-- index.html -->
+    <script>
+      const securityservice = require('../service/securityservice');
+      $("#logout").click(function(e){
+        securityservice.logout()
+        .then(response => {
+          if(response.status === 0){
+            const electron = require('electron');
+            const remote = electron.remote;
+            let windowBrowser = remote.getCurrentWindow();
+            windowBrowser.close();
+          }
+        });
+      });
+
+      const HID = require('node-hid');
+      var devices = HID.devices();
+
+      console.log(devices);
+
+      
+      var barcodeScanner = devices.find(scanner => {
+        return scanner.vendorId === 3118 && scanner.productId === 516;
+      });
+
+      console.log(barcodeScanner);
+
+      if(barcodeScanner){
+        console.log(barcodeScanner.vendorId, barcodeScanner.productId);
+        var device = new HID.HID(barcodeScanner.vendorId, barcodeScanner.productId);
+        
+        var myuint8Arr = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0]);
+        console.log(myuint8Arr);
+        largeuint8ArrToString(myuint8Arr, function(text){
+          console.log("sda", text);
+        })
+
+        device.on('data', function(data){
+          console.log(data);
+        });
+        
+        device.on('error', function(err){
+          console.log(err);
+        });
+      }
+
+      function uint8arrayToStringMethod(myUint8Arr){
+        return String.fromCharCode.apply(null, myUint8Arr);
+      }
+
+      function largeuint8ArrToString(uint8arr, callback) {
+        var bb = new Blob([uint8arr]);
+        var f = new FileReader();
+        f.onload = function(e) {
+            callback(e.target.result);
+        };
+        
+        f.readAsText(bb);
+      }
+    </script>
+  </body>
+</html>
